@@ -5,6 +5,7 @@ import numpy as np
 
 ## we look to built the core score learning model in this file 
 ## we will make use of this later on when we look to generate samples and run the reverse process
+device = 'cpu' #@param ['cuda', 'cpu'] {'type':'string'}
 
 class GaussianFourierProjection(nn.Module):
     def __init__(self,embed_dim,scale=30.):
@@ -26,7 +27,7 @@ class Dense(nn.Module):
     """Fully connected layer reshaping outputs to feature maps"""
     def __init__(self,input_dim,output_dim):
         super().__init__()
-        self.dense == nn.Linear(input_dim,output_dim)
+        self.dense = nn.Linear(input_dim,output_dim)
     def forward(self, x):
         return self.dense(x)[...,None,None]
     

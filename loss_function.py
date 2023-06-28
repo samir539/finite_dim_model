@@ -5,7 +5,7 @@ import numpy as np
 import functools
 
 #@title Define the loss function (double click to expand or collapse)
-
+device = 'cpu' #@param ['cuda', 'cpu'] {'type':'string'}
 def loss_fn(model, x, marginal_prob_std, eps=1e-5):
     """The loss function for training score-based generative models.
 

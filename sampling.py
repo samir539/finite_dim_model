@@ -4,7 +4,7 @@ from torch.optim import Adam
 from torch.utils.data import DataLoader
 import torchvision.transforms as transforms
 from torchvision.datasets import MNIST
-import tqdm
+from tqdm import tqdm
 import numpy as np
 from matplotlib import pyplot as plt
 from score_based_model import ScoreNet
@@ -15,7 +15,7 @@ from forward_sde import diffusion_coeff_fn
 
 #SAMPLER
 #@title Define the Euler-Maruyama sampler (double click to expand or collapse)
-
+device = 'cpu' #@param ['cuda', 'cpu'] {'type':'string'}
 ## The number of sampling steps.
 num_steps =  500#@param {'type':'integer'}
 def Euler_Maruyama_sampler(score_model, 
@@ -23,7 +23,7 @@ def Euler_Maruyama_sampler(score_model,
                            diffusion_coeff, 
                            batch_size=64, 
                            num_steps=num_steps, 
-                           device='cuda', 
+                           device='cpu', 
                            eps=1e-3):
     """Generate samples from score-based models with the Euler-Maruyama solver.
 
@@ -48,7 +48,7 @@ def Euler_Maruyama_sampler(score_model,
     step_size = time_steps[0] - time_steps[1]
     x = init_x
     with torch.no_grad():
-        for time_step in tqdm.notebook.tqdm(time_steps):      
+        for time_step in tqdm(time_steps):      
             batch_time_step = torch.ones(batch_size, device=device) * time_step
             g = diffusion_coeff(batch_time_step)
             mean_x = x + (g**2)[:, None, None, None] * score_model(x, batch_time_step) * step_size
@@ -64,8 +64,8 @@ def Euler_Maruyama_sampler(score_model,
 from torchvision.utils import make_grid
 
 ## Load the pre-trained checkpoint from disk.
-device = 'cuda' #@param ['cuda', 'cpu'] {'type':'string'}
-ckpt = torch.load('ckpt.pth', map_location=device)
+device = 'cpu' #@param ['cuda', 'cpu'] {'type':'string'}
+ckpt = torch.load('ckpt.pth', map_location=torch.device('cpu'))
 score_model.load_state_dict(ckpt)
 
 sample_batch_size = 64 #@param {'type':'integer'}
@@ -83,7 +83,7 @@ samples = samples.clamp(0.0, 1.0)
 # %matplotlib inline
 import matplotlib.pyplot as plt
 sample_grid = make_grid(samples, nrow=int(np.sqrt(sample_batch_size)))
-
+print("HELLO WORLD")
 plt.figure(figsize=(6,6))
 plt.axis('off')
 plt.imshow(sample_grid.permute(1, 2, 0).cpu(), vmin=0., vmax=1.)
