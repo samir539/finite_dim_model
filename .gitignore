@@ -1,2 +1,4 @@
 /finite_dim_env
 /__pycache__
+/MNIST
+*.pth

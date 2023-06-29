@@ -24,7 +24,7 @@ dataset = MNIST('.', train=True, transform=transforms.ToTensor(), download=True)
 data_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=0)
 
 optimizer = Adam(score_model.parameters(), lr=lr)
-tqdm_epoch = tqdm.trange(n_epochs)
+tqdm_epoch = tqdm(range(n_epochs))
 for epoch in tqdm_epoch:
   avg_loss = 0.
   num_items = 0
