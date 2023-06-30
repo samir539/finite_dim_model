@@ -81,6 +81,7 @@ class ScoreNet(nn.Module):
   def forward(self, x, t): 
     # Obtain the Gaussian random feature embedding for t   
     embed = self.act(self.embed(t))    
+
     # Encoding path
     h1 = self.conv1(x)    
     ## Incorporate information from t
@@ -121,3 +122,8 @@ class ScoreNet(nn.Module):
     h = h / self.marginal_prob_std(t)[:, None, None, None]
     return h
     
+
+#testing 
+testdense = Dense(5,2)
+inputtest = torch.randn(2,5)
+print(testdense(inputtest))
