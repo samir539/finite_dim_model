@@ -10,7 +10,6 @@ device = 'cpu' #@param ['cuda', 'cpu'] {'type':'string'}
 class GaussianFourierProjection(nn.Module):
     def __init__(self,embed_dim,scale=30.):
         """
-
         """
         super().__init__()
         self.W = nn.Parameter(torch.randn(embed_dim // 2)*scale, requires_grad=False)
@@ -89,14 +88,17 @@ class ScoreNet(nn.Module):
     ## Group normalization
     h1 = self.gnorm1(h1)
     h1 = self.act(h1)
+
     h2 = self.conv2(h1)
     h2 += self.dense2(embed)
     h2 = self.gnorm2(h2)
     h2 = self.act(h2)
+
     h3 = self.conv3(h2)
     h3 += self.dense3(embed)
     h3 = self.gnorm3(h3)
     h3 = self.act(h3)
+
     h4 = self.conv4(h3)
     h4 += self.dense4(embed)
     h4 = self.gnorm4(h4)
@@ -104,7 +106,7 @@ class ScoreNet(nn.Module):
 
     # Decoding path
     h = self.tconv4(h4)
-    ## Skip connection from the encoding path
+    ## Skip connection from the encoding path 
     h += self.dense5(embed)
     h = self.tgnorm4(h)
     h = self.act(h)
@@ -124,6 +126,6 @@ class ScoreNet(nn.Module):
     
 
 #testing 
-testdense = Dense(5,2)
-inputtest = torch.randn(2,5)
-print(testdense(inputtest))
+# testdense = Dense(5,2)
+# inputtest = torch.randn(2,5)
+# # print(testdense(inputtest))
