@@ -13,6 +13,15 @@ class scoreNet(nn.Module):
     def __init__(self):
         super().__init__()
         #attributes needed
+        self.max_pool = self.max_pooling_downsample()
+        self.down_conv_1 = self.double_conv(1,32,2)
+        self.down_conv_2 = self.double_conv(32,64,2)
+        self.down_conv_3 = self.double_conv(64,128,2)
+        
+        self.up_conv1 = self.double_conv_up(128,64)
+        
+        self.up_process_1 = nn.ConvTranspose2d(in_channels=128,out_channels=64)
+        
 
     def double_conv(channel_in,channel_out,kernel_size):
         """
@@ -63,4 +72,5 @@ class scoreNet(nn.Module):
         diff = (input_size - target_size)//2
         return input[:,:,diff:target_size-diff, diff:target_size-diff]
     
+
 
