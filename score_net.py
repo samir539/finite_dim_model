@@ -19,8 +19,12 @@ class scoreNet(nn.Module):
         self.down_conv_3 = self.double_conv(64,128,2)
         
         self.up_conv1 = self.double_conv_up(128,64)
-        
-        self.up_process_1 = nn.ConvTranspose2d(in_channels=128,out_channels=64)
+        self.up_process_1 = nn.ConvTranspose2d(in_channels=64,out_channels=32,kernel_size=2,stride=2,output_padding=1)
+        self.up_conv2 = self.double_conv(64,32,kernel_size=3)
+        self.up_process_2 = nn.ConvTranspose2d(in_channels=32,out_channels=16,kernel_size=2, stride=2)
+        self.up_conv3 = self.double_conv(32,16)
+        self.output = nn.Conv2d(in_channels=16,out_channels=1, kernel_size=1)
+
         
 
     def double_conv(channel_in,channel_out,kernel_size):
