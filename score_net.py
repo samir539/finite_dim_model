@@ -27,7 +27,7 @@ class scoreNet(nn.Module):
 
         
 
-    def double_conv(channel_in,channel_out,kernel_size):
+    def double_conv(self,channel_in,channel_out,kernel_size):
         """
         Method to implement the double convolution step (as outlined in O.Renneberger et al.)
         Between each convolutional layer a ReLU activation is used 
@@ -43,7 +43,7 @@ class scoreNet(nn.Module):
                                            nn.ReLU(inplace=True))
         return double_convolution
     
-    def max_pooling_downsample(kernel_size=2,stride=2):
+    def max_pooling_downsample(self,kernel_size=2,stride=2):
         """
         we use max_pooling in the downsampling 
         :param kernel_size: size of the kernel which performs max pooling
@@ -52,7 +52,7 @@ class scoreNet(nn.Module):
         max_pool = nn.MaxPool2d(kernel_size,stride)
         return max_pool
     
-    def double_conv_up(channel_in, channel_out):
+    def double_conv_up(self,channel_in, channel_out):
         """
         Method to implement a double convolution however the image dims increase by 2 in each dimension
         :param channel_in: number of in channels 
@@ -64,7 +64,7 @@ class scoreNet(nn.Module):
                                        nn.ReLU(inplace=True))
         return double_conv_up
 
-    def crop(input,target):
+    def crop(self,input,target):
         """
         Method to implement the crop process (as outlined in O.Renneberger et al.)
         ***************** function from tutorial ****************
@@ -76,5 +76,45 @@ class scoreNet(nn.Module):
         diff = (input_size - target_size)//2
         return input[:,:,diff:target_size-diff, diff:target_size-diff]
     
+    def forward(self,x):
+        """
+        Forward pass of the neural network
+        :param x: the input data point 
+        """
+        #encoding process
+        x1 = self.down_conv_1(x)#concat
+        print(x1.size())
+        x2 = self.max_pool(x1)
+        print(x2.size())
+        x3 = self.down_conv_2(x2)#concat
+        print(x3.size())
+        x4 = self.max_pool(x3)
+        print(x4.size())
+        x5 = self.down_conv_3(x4)
+        print(x5.size())
+
+        #decode process
+        x6 = self.up_conv1(x5)
+        print(x6.size())
+        x7 = self.up_process_1(x6)
+        print(x7.size())
+        unet_crop = self.crop(x3,x7)
+        
+        x7 = self.up_conv2(torch.cat[x7,unet_crop],1)
+        print(x7.size())
+
+        x7 = self.up_process_2(x7)
+        print(x7.size())
+        unet_crop = self.crop(x1,x7)
+        x7 = self.up_conv3(torch.cat[x7,unet_crop],1)
+        print(x7.size())
+
+        #!!normalise output
+        return x7
+
+
+
+
+
 
 
