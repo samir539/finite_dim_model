@@ -51,5 +51,16 @@ class scoreNet(nn.Module):
                                        nn.ReLU(inplace=True))
         return double_conv_up
 
-
+    def crop(input,target):
+        """
+        Method to implement the crop process (as outlined in O.Renneberger et al.)
+        ***************** function from tutorial ****************
+        :param input:
+        :param target: 
+        """
+        target_size = target.size()[2]
+        input_size = input.size()[2]
+        diff = (input_size - target_size)//2
+        return input[:,:,diff:target_size-diff, diff:target_size-diff]
+    
 
