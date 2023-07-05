@@ -1,4 +1,5 @@
 /finite_dim_env
+/finite_score_env
 /__pycache__
 /MNIST
 *.pth
