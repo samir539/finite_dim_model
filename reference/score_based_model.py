@@ -60,7 +60,7 @@ class ScoreNet(nn.Module):
     self.conv4 = nn.Conv2d(channels[2], channels[3], 3, stride=2, bias=False)
     self.dense4 = Dense(embed_dim, channels[3])
     self.gnorm4 = nn.GroupNorm(32, num_channels=channels[3])    
-
+            
     # Decoding layers where the resolution increases
     self.tconv4 = nn.ConvTranspose2d(channels[3], channels[2], 3, stride=2, bias=False)
     self.dense5 = Dense(embed_dim, channels[2])
@@ -129,3 +129,4 @@ class ScoreNet(nn.Module):
 # testdense = Dense(5,2)
 # inputtest = torch.randn(2,5)
 # # print(testdense(inputtest))
+
