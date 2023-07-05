@@ -84,32 +84,21 @@ class scoreNet(nn.Module):
         print(x.size())
         #encoding process
         x1 = self.down_conv_1(x)#concat
-        # print(x1.size())
         x2 = self.max_pool(x1)
-        # print(x2.size())
         x3 = self.down_conv_2(x2)#concat
-        # print(x3.size())
         x4 = self.max_pool(x3)
-        # print(x4.size())
         x5 = self.down_conv_3(x4)
-        # print(x5.size())
 
         #decode process
         x6 = self.up_conv1(x5)
-        # print(x6.size())
+
         x7 = self.up_process_1(x6)
-        # print("this is the size of x7",x7.size(), "this is the size of x3",x3.size())
         unet_crop = self.crop(x3,x7)
-        # print("this is the size of the CROP", unet_crop.size())
         intermed = torch.cat([x7,unet_crop],1)
-        # print("this is intermed", intermed.size())
         x7 = self.up_conv2(intermed)
-        # print(x7.size())
 
         x7 = self.up_process_2(x7)
-        print("this is x7 now ", x7.size())
         unet_crop = self.crop(x1,x7)
-        print("this is unet_crop", unet_crop.size())
         x7 = self.up_conv3(torch.cat([x7,unet_crop],1))
         print(x7.size())
 
