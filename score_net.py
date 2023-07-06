@@ -2,9 +2,9 @@ import torch
 import torch.nn as nn 
 import numpy as np
 
-
-## Set up basic unet architecture to estimate the score function 
-#test comment
+######################################################################################
+# Set up basic unet architecture to estimate the score function 
+# test comment
 
 class GaussianFourierProjection(nn.Module):
     def __init__(self,embed_dim,scale=30.):
@@ -127,35 +127,34 @@ class scoreNet(nn.Module):
         embedding = self.activation(self.embed(t))
         x1 = self.down_conv_1(x)#concat
         x1 += self.dense1(embedding)
-        print("this is x1 shape", x1.size())
         x1 = self.group_normalisation1(x1)
-        print("this is x1 shape", x1.size())
+        # print("this is x1 shape", x1.size())
         # print(x1_temp.size())
         x2 = self.max_pool(x1)
         x2 += self.dense2(embedding)
-        print("this is x2 shape", x2.size())
+        # print("this is x2 shape", x2.size())
         x2 = self.group_normalisation2(x2)
-        print("this is x2 shape", x2.size())
+        # print("this is x2 shape", x2.size())
         x3 = self.down_conv_2(x2)#concat
         x4 = self.max_pool(x3)
         x4 += self.dense3(embedding)
-        print("this is x4 shape", x4.size())
+        # print("this is x4 shape", x4.size())
         x4 = self.group_normalisation3(x4)
-        print("this is x4 shape", x4.size())
+        # print("this is x4 shape", x4.size())
         x5 = self.down_conv_3(x4)
         
 
         #decode process
         x6 = self.up_conv1(x5)
         x6 += self.dense4(embedding)
-        print("this is x6 shape", x6.size())
+        # print("this is x6 shape", x6.size())
         # x6 = self.group_normalisation4(x6)
-        print("THIS",x6.size())
+        # print("THIS",x6.size())
         x7 = self.up_process_1(x6)
-        print("this is x7", x7.size())
+        # print("this is x7", x7.size())
         unet_crop = self.crop(x3,x7)
-        print("this is unet_crop", unet_crop.size())
-        print("this is x7 size", x7.size())
+        # print("this is unet_crop", unet_crop.size())
+        # print("this is x7 size", x7.size())
         intermed = torch.cat([x7,unet_crop],1)
         x7 = self.up_conv2(intermed)
         
@@ -166,7 +165,7 @@ class scoreNet(nn.Module):
         x7 = self.up_conv3(torch.cat([x7,unet_crop],1))
         #!!normalise output
         x7 = x7/self.marginal_prob(t)[:,None,None,None]
-        print(x7.size())
+        # print(x7.size())
         return x7
 
 

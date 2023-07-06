@@ -60,6 +60,7 @@ def loss_function(net,x, marginal_forward,sigma=25):
     #compute loss
     # loss = (1/2)*torch.mean(torch.sum((score_estimate + (x_perturbed - x)/sigma**2)**2, dim=(1,2,3)))
     loss = torch.mean(torch.sum((score_estimate * marginal_prob_std[:, None, None, None] + random_like)**2, dim=(1,2,3)))
+    
     return loss
 
 
