@@ -54,7 +54,7 @@ def Euler_Maruyama_sampler(score_model,
         for time_step in tqdm(time_steps):      
             batch_time_step = torch.ones(batch_size, device=device) * time_step
             g = diffusion_coeff(batch_time_step)
-            mean_x = x + (g**2)[:, None, None, None] * score_model(x) * step_size
+            mean_x = x + (g**2)[:, None, None, None] * score_model(x,batch_time_step) * step_size
             # mean_x = x + (g**2)[:, None, None, None] * score_model(x, batch_time_step) * step_size
             x = mean_x + torch.sqrt(step_size) * g[:, None, None, None] * torch.randn_like(x)      
     # Do not include any noise in the last sampling step.

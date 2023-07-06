@@ -56,10 +56,10 @@ def loss_function(net,x, marginal_forward,sigma=25):
     x_perturbed = x + random_like*marginal_prob_std
     #use score net to get score
     score_model = net
-    score_estimate = score_model.forward(x_perturbed)
+    score_estimate = score_model.forward(x_perturbed,random_time)
     #compute loss
-    loss = (1/2)*torch.mean(torch.sum((score_estimate + (x_perturbed - x)/sigma**2)**2, dim=(1,2,3)))
-    # loss = torch.mean(torch.sum((score_estimate * marginal_prob_std[:, None, None, None] + random_like)**2, dim=(1,2,3)))
+    # loss = (1/2)*torch.mean(torch.sum((score_estimate + (x_perturbed - x)/sigma**2)**2, dim=(1,2,3)))
+    loss = torch.mean(torch.sum((score_estimate * marginal_prob_std[:, None, None, None] + random_like)**2, dim=(1,2,3)))
     return loss
 
 

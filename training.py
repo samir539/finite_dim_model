@@ -41,7 +41,7 @@ def train_epoch(trainloader, net , optimiser,marginal_std, loss_function):
         optimiser.zero_grad()
         
         #forward pass
-        output = net.forward(inputs)
+        # output = net.forward(inputs)
         
         #loss
         loss = loss_function(net,inputs,marginal_std)
@@ -71,7 +71,7 @@ def run_train(batch_size,learning_rate,epoch_num,loss_function, optimiser_choice
     :param dataset_choice: the dataset 
     """
     #init scoreNet
-    score_net = scoreNet()
+    score_net = scoreNet(marginal_forward)
     
     #optimiser
     if optimiser_choice == 'SGD':
@@ -95,4 +95,4 @@ def run_train(batch_size,learning_rate,epoch_num,loss_function, optimiser_choice
         
     
     
-score_net = run_train(32,1e-4,2,loss_function,'ADAM',MNIST,marginal_forward)
+score_net = run_train(32,1e-4,3,loss_function,'ADAM',MNIST,marginal_forward)
