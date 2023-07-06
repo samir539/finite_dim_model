@@ -30,9 +30,10 @@ def marginal_forward(time,sigma=torch.Tensor([25]),std=False):
 ## loss function
 ################
 
-def loss_function(x, marginal_forward,sigma=25):
+def loss_function(net,x, marginal_forward,sigma=25):
     """
     Loss function to pass into 
+    :param net: the network which learns the score
     :param x: 
     :param marginal_forward: 
     """
@@ -46,7 +47,7 @@ def loss_function(x, marginal_forward,sigma=25):
     #perturb data
     x_perturbed = x + random_like*marginal_prob_std
     #use score net to get score
-    score_model = scoreNet()
+    score_model = net
     score_estimate = score_model.forward(x_perturbed)
     #compute loss
     loss = (1/2)*torch.mean(torch.sum((score_estimate + (x_perturbed - x)/sigma**2)**2, dim=(1,2,3)))
