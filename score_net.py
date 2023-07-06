@@ -42,6 +42,7 @@ class scoreNet(nn.Module):
         #attributes needed
         self.embed = nn.Sequential(GaussianFourierProjection(embed_dim=embed_dim),nn.Linear(embed_dim, embed_dim))
         self.activation = nn.ReLU(inplace=True)
+        self.marginal_prob = marginal_prob_std
         self.max_pool = self.max_pooling_downsample()
         self.down_conv_1 = self.double_conv(1,32,2)
         self.dense1 = Dense(embed_dim, 32)
@@ -118,18 +119,13 @@ class scoreNet(nn.Module):
         :param x: the input data point 
         """
         #encoding process
-        print("the shape at the start is x1", x.size())
         embedding = self.activation(self.embed(t))
         x1 = self.down_conv_1(x)#concat
-        print(x1.size())
         x1 += self.dense1(embedding)
         # print(x1_temp.size())
         x2 = self.max_pool(x1)
-        print(x2.size())
         x2 += self.dense2(embedding)
-         
         x3 = self.down_conv_2(x2)#concat
-        print("This is the shape of x3", x3.size())
         x4 = self.max_pool(x3)
         x4 += self.dense3(embedding)
         x5 = self.down_conv_3(x4)
@@ -137,7 +133,6 @@ class scoreNet(nn.Module):
 
         #decode process
         x6 = self.up_conv1(x5)
-        print("this is the size of x6",x6.size())
         x6 += self.dense4(embedding)
         # print("THIS",x6_temp.size())
         x7 = self.up_process_1(x6)
@@ -149,8 +144,9 @@ class scoreNet(nn.Module):
         x7 += self.dense5(embedding)
         unet_crop = self.crop(x1,x7)
         x7 = self.up_conv3(torch.cat([x7,unet_crop],1))
-        print(x7.size())
         #!!normalise output
+        x7 = x7/self.marginal_prob(t)[:,None,None,None]
+        print(x7.size())
         return x7
 
 
