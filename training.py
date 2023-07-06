@@ -7,6 +7,8 @@ import torchvision
 import torch.optim as optim
 from tqdm import tqdm
 from score_net import scoreNet
+from loss import loss_function
+from loss import marginal_forward
 
 
 MNIST = torchvision.datasets.MNIST(root="./",download=True,train=True,transform=transforms.Compose([transforms.ToTensor()]),)
@@ -16,7 +18,7 @@ def load_data(batch_size,data_set):
     :param batch_size: samples in a backward and forward pass
     :param data_set: data set
     """
-    data_loader = DataLoader(data_set=data_set, batch_size=batch_size, shuffle=True)
+    data_loader = DataLoader(dataset=data_set, batch_size=batch_size, shuffle=True)
     return data_loader
     
     
@@ -43,7 +45,7 @@ def train_epoch(trainloader, net , optimiser,marginal_std, loss_function):
         
         #loss
         loss = loss_function(net,inputs,marginal_std)
-        loss.backwards()
+        loss.backward()
         
         #update weights
         optimiser.step()
@@ -89,7 +91,8 @@ def run_train(batch_size,learning_rate,epoch_num,loss_function, optimiser_choice
     
         torch.save(score_net.state_dict(), 'save.pth')
         
-    return None
+    return score_net
         
     
     
+score_net = run_train(32,1e-4,2,loss_function,'ADAM',MNIST,marginal_forward)

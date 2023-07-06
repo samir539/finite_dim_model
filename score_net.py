@@ -4,13 +4,16 @@ import numpy as np
 
 ## Set up basic unet architecture to estimate the score function 
 #test comment
+
+
+    
 class scoreNet(nn.Module):
     """
     Custom neural network, used to estimate the score function, which is needed in the sampling process of the g
     generative model.
     Architecture based on the U-net [O.Ronneberger et al.]
     """
-    def __init__(self):
+    def __init__(self,marginal_prob_std,embed_dim=256):
         super().__init__()
         #attributes needed
         self.max_pool = self.max_pooling_downsample()
@@ -76,12 +79,13 @@ class scoreNet(nn.Module):
         diff = (input_size - target_size)//2
         return input[:,:,diff:input_size-diff, diff:input_size-diff]
     
+    
+    
     def forward(self,x):
         """
         Forward pass of the neural network
         :param x: the input data point 
         """
-        print(x.size())
         #encoding process
         x1 = self.down_conv_1(x)#concat
         x2 = self.max_pool(x1)
@@ -100,16 +104,10 @@ class scoreNet(nn.Module):
         x7 = self.up_process_2(x7)
         unet_crop = self.crop(x1,x7)
         x7 = self.up_conv3(torch.cat([x7,unet_crop],1))
-        print(x7.size())
 
         #!!normalise output
         return x7
 
 
-
-
-img = torch.rand((1,1,28,28))
-testnet = scoreNet()
-testnet(img)
 
 
