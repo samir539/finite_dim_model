@@ -51,7 +51,7 @@ class scoreNet(nn.Module):
         self.dense3 = Dense(embed_dim, 64)
         
         self.up_conv1 = self.double_conv_up(128,64,2)
-        self.dense4 = Dense(embed_dim, 128)
+        self.dense4 = Dense(embed_dim, 64)
         self.up_process_1 = nn.ConvTranspose2d(in_channels=64,out_channels=64,kernel_size=2,stride=2,output_padding=1)
         self.up_conv2 = self.double_conv(128,32,kernel_size=3)
         self.dense5 = Dense(embed_dim, 32)
@@ -122,12 +122,12 @@ class scoreNet(nn.Module):
         embedding = self.activation(self.embed(t))
         x1 = self.down_conv_1(x)#concat
         print(x1.size())
-        x1_temp= self.dense1(embedding)
-        print(x1_temp.size())
+        x1 += self.dense1(embedding)
+        # print(x1_temp.size())
         x2 = self.max_pool(x1)
         print(x2.size())
-        x2_temp = self.dense2(embedding)
-        print(x2_temp.size())
+        x2 += self.dense2(embedding)
+         
         x3 = self.down_conv_2(x2)#concat
         print("This is the shape of x3", x3.size())
         x4 = self.max_pool(x3)
@@ -138,8 +138,8 @@ class scoreNet(nn.Module):
         #decode process
         x6 = self.up_conv1(x5)
         print("this is the size of x6",x6.size())
-        x6_temp = self.dense4(embedding)
-        print("THIS",x6_temp.size())
+        x6 += self.dense4(embedding)
+        # print("THIS",x6_temp.size())
         x7 = self.up_process_1(x6)
         unet_crop = self.crop(x3,x7)
         intermed = torch.cat([x7,unet_crop],1)
@@ -167,6 +167,8 @@ def marginal_forward(time,sigma=torch.Tensor([25]),std=False):
         return marginal_forward_val_std
     else:
         return marginal_forward_val
+    
+    
 random_time = torch.rand(1)
 img = torch.rand((1,1,28,28))
 testnet = scoreNet(marginal_forward)
